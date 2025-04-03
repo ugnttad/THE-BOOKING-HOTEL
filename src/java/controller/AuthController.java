@@ -23,7 +23,7 @@ import model.Role;
 import model.Room;
 import model.User;
 import utils.EmailUtils;
-import utils.GoogleUtils;
+//import utils.GoogleUtils;
 import utils.PasswordUtils;
 
 @WebServlet(name = "AuthController", urlPatterns = {"/register", "/login", "/logout", "/google-login", "/verify-email", "/forgot-password", "/verify-forgot-password", "/reset-password", "change-password"})
@@ -391,49 +391,51 @@ public class AuthController extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Google login request.");
             return;
         }
-
-        try {
-            // Lấy access token từ Google
-            String accessToken = GoogleUtils.getToken(code);
-            User googleUser = GoogleUtils.getUserInfo(accessToken);
-
-            // Kiểm tra email trong hệ thống
-            User existingUser = userDAO.getUserByEmail(googleUser.getEmail());
-
-            if (existingUser != null) {
-                // Nếu tài khoản đã tồn tại, cập nhật google_id nếu chưa có
-                if (existingUser.getGoogleId() == null) {
-                    existingUser.setGoogleId(googleUser.getGoogleId());
-                    userDAO.updateUserGoogleId(existingUser);
-                }
-
-                // Đăng nhập
-                HttpSession session = request.getSession();
-                session.setAttribute("user", existingUser);
-                Map<Integer, List<Room>> selectedRooms = new HashMap<>();
-
-                session.setAttribute("selectedRooms", selectedRooms);
-                request.getRequestDispatcher("/").forward(request, response);
-            } else {
-                // Nếu chưa có tài khoản, tạo mới
-                googleUser.setRole(new Role(2, "User")); // Mặc định role là User
-
-                int newUserId = userDAO.registerUser(googleUser);
-                if (newUserId > 0) {
-                    HttpSession session = request.getSession();
-                    session.setAttribute("user", googleUser);
-                    Map<Integer, List<Room>> selectedRooms = new HashMap<>();
-
-                    session.setAttribute("selectedRooms", selectedRooms);
-
-                    request.getRequestDispatcher("/").forward(request, response);
-                } else {
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to register Google account.");
-                }
-            }
-        } catch (Exception e) {
-            Logger.getLogger(AuthController.class.getName()).log(Level.SEVERE, null, e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Google authentication failed.");
-        }
     }
 }
+
+//        try {
+            // Lấy access token từ Google
+//            String accessToken = GoogleUtils.getToken(code);
+//            User googleUser = GoogleUtils.getUserInfo(accessToken);
+
+            // Kiểm tra email trong hệ thống
+//            User existingUser = userDAO.getUserByEmail(googleUser.getEmail());
+//
+//            if (existingUser != null) {
+//                // Nếu tài khoản đã tồn tại, cập nhật google_id nếu chưa có
+//                if (existingUser.getGoogleId() == null) {
+//                    existingUser.setGoogleId(googleUser.getGoogleId());
+//                    userDAO.updateUserGoogleId(existingUser);
+//                }
+//
+//                // Đăng nhập
+//                HttpSession session = request.getSession();
+//                session.setAttribute("user", existingUser);
+//                Map<Integer, List<Room>> selectedRooms = new HashMap<>();
+//
+//                session.setAttribute("selectedRooms", selectedRooms);
+//                request.getRequestDispatcher("/").forward(request, response);
+//            } else {
+//                // Nếu chưa có tài khoản, tạo mới
+//                googleUser.setRole(new Role(2, "User")); // Mặc định role là User
+//
+//                int newUserId = userDAO.registerUser(googleUser);
+//                if (newUserId > 0) {
+//                    HttpSession session = request.getSession();
+//                    session.setAttribute("user", googleUser);
+//                    Map<Integer, List<Room>> selectedRooms = new HashMap<>();
+//
+//                    session.setAttribute("selectedRooms", selectedRooms);
+//
+//                    request.getRequestDispatcher("/").forward(request, response);
+//                } else {
+//                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to register Google account.");
+//                }
+//            }
+//        } catch (Exception e) {
+//            Logger.getLogger(AuthController.class.getName()).log(Level.SEVERE, null, e);
+//            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Google authentication failed.");
+//        }
+//    }
+//}
